@@ -23,8 +23,16 @@ public class QuestionController {
                 .doOnError(error -> System.out.println("Error Creating Question" + error));
     }
 
-//    @GetMapping
-//    public Flux<QuestionResponseDTO> searchQuestion()
+    @GetMapping("/search")
+    public Flux<QuestionResponseDTO> searchQuestion(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int page){
+
+        return questionService.searchQuestions(query,offset, page);
+
+
+    }
 
 
 }

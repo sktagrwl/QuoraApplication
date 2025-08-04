@@ -6,9 +6,10 @@ import com.example.QuoraApp.dto.QuestionResponseDTO;
 import com.example.QuoraApp.models.Question;
 import com.example.QuoraApp.repositories.IQuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 
@@ -35,9 +36,11 @@ public class QuestionService implements IQuestionService{
                 .doOnError(error -> System.out.println("Error creating question" + error));
     }
 
-//    @Override
-//    public Flux<QuestionResponseDTO> searchQuestions(String searchTerm, int offset, int page){
-//        return null;
-////        return questionRepository.findByTitleOrContentContainingIgnoreCase(searchTerm, PageRequest.of(offset, page));
-//    }
+    @Override
+    public Flux<QuestionResponseDTO> searchQuestions(String searchTerm, int offset, int page){
+        return questionRepository.findByTitleOrContentContainingIgnoreCase(searchTerm, PageRequest.of(offset, page))
+                .map(QuestionAdapter::toQuestionResponseDTO)
+                .doOnError(error -> System.out.println("Error searching question" + error))
+                .doOnComplete(() -> System.out.println("Questions Searched Successfully"));
+    }
 }

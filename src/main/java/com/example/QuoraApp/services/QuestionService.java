@@ -5,8 +5,10 @@ import com.example.QuoraApp.dto.QuestionRequestDTO;
 import com.example.QuoraApp.dto.QuestionResponseDTO;
 import com.example.QuoraApp.models.Question;
 import com.example.QuoraApp.repositories.IQuestionRepository;
+import com.example.QuoraApp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,5 +44,25 @@ public class QuestionService implements IQuestionService{
                 .map(QuestionAdapter::toQuestionResponseDTO)
                 .doOnError(error -> System.out.println("Error searching question" + error))
                 .doOnComplete(() -> System.out.println("Questions Searched Successfully"));
+    }
+
+    @Override
+    public Flux<QuestionResponseDTO> getAllQuestion(String cursor, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+
+        if(!CursorUtils.isValidCursor(cursor)){
+            return questionRepository.findTop10ByOrderByCreatedAt()
+                    .take(size)
+                    .map(QuestionAdapter::toQuestionResponseDTO)
+                    .doOnError(error -> System.out.println("Error finding question" + error))
+                    .doOnComplete(() -> System.out.println("All Questions fetched successfully"));
+        }
+        else {
+            LocalDateTime cursorTimeStamp = CursorUtils.parseCursor(cursor);
+            return questionRepository.findByCreatedAtGreaterThanOrderByCreatedAtDesc(cursorTimeStamp,pageable)
+                    .map(QuestionAdapter::toQuestionResponseDTO)
+                    .doOnComplete(() -> System.out.println("All Questions fetched successfully"))
+                    .doOnError(error -> System.out.println("Error finding question" + error));
+        }
     }
 }

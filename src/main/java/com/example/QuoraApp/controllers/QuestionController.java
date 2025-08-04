@@ -29,10 +29,22 @@ public class QuestionController {
             @RequestParam(defaultValue = "0") int offset,
             @RequestParam(defaultValue = "10") int page){
 
-        return questionService.searchQuestions(query,offset, page);
+        return questionService.searchQuestions(query,offset, page)
+                .doOnComplete(() -> System.out.println("Questions has been searched"))
+                .doOnError(error -> System.out.println("Error searching for questions" + error));
+    }
 
+    @GetMapping
+    public Flux<QuestionResponseDTO> getAllQuestions(
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "10") int size){
+
+        return questionService.getAllQuestion(cursor, size)
+                .doOnComplete(() -> System.out.println("All Questions has been fetched"))
+                .doOnError(error -> System.out.println("Error searching for questions" + error));
 
     }
+
 
 
 }

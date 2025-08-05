@@ -1,6 +1,7 @@
 package com.example.QuoraApp.controllers;
 
 
+import com.example.QuoraApp.dto.DeleteResponseDTO;
 import com.example.QuoraApp.dto.QuestionRequestDTO;
 import com.example.QuoraApp.dto.QuestionResponseDTO;
 import com.example.QuoraApp.services.IQuestionService;
@@ -52,7 +53,10 @@ public class QuestionController {
                 .doOnError(error -> System.out.println("Error searching for question by id" + error));
     }
 
-
-
-
+    @DeleteMapping("/{id}")
+    public Mono<DeleteResponseDTO> deleteQuestionById(@PathVariable String id){
+        return questionService.deleteQuestionById(id)
+                .doOnSuccess(result -> System.out.println("Question with Id :" + id + " has been deleted"))
+                .doOnError(error -> System.out.println("Error deleting question" + error));
+    }
 }

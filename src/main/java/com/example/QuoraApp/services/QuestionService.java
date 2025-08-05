@@ -1,13 +1,13 @@
 package com.example.QuoraApp.services;
 
 import com.example.QuoraApp.adapters.QuestionAdapter;
+import com.example.QuoraApp.dto.DeleteResponseDTO;
 import com.example.QuoraApp.dto.QuestionRequestDTO;
 import com.example.QuoraApp.dto.QuestionResponseDTO;
 import com.example.QuoraApp.models.Question;
 import com.example.QuoraApp.repositories.IQuestionRepository;
 import com.example.QuoraApp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -78,5 +78,14 @@ public class QuestionService implements IQuestionService{
                 .map(QuestionAdapter::toQuestionResponseDTO)
                 .doOnSuccess(result -> System.out.println("Question fetched successfully by id"))
                 .doOnError(error -> System.out.println("Error finding question" + error));
+    }
+
+    @Override
+    public Mono<DeleteResponseDTO> deleteQuestionById(String id) {
+        return questionRepository.deleteById(id)
+                .then(Mono.just(new DeleteResponseDTO("Question Deleted Successfully", id, true)))
+                .onErrorReturn(new DeleteResponseDTO("Failed to Delete Question" , id, false))
+                .doOnSuccess(result -> System.out.println("Question with Id :" + id + " has been deleted"))
+                .doOnError(error -> System.out.println("Error deleting question" + error));
     }
 }

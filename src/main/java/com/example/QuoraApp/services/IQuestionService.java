@@ -1,5 +1,6 @@
 package com.example.QuoraApp.services;
 
+import com.example.QuoraApp.dto.DeleteResponseDTO;
 import com.example.QuoraApp.dto.QuestionRequestDTO;
 import com.example.QuoraApp.dto.QuestionResponseDTO;
 import org.springframework.data.domain.PageImpl;
@@ -15,5 +16,7 @@ public interface IQuestionService {
     public Mono<PageImpl<QuestionResponseDTO>> getAllQuestion(String cursor, int size);
 
     public Mono<QuestionResponseDTO> getQuestionById(String id);
+
+    public Mono<DeleteResponseDTO> deleteQuestionById(String id);
 
 }

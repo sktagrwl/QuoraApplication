@@ -16,7 +16,7 @@ public interface IQuestionRepository extends ReactiveMongoRepository<Question, S
     @Query("{'$or' : [{'title' : {$regex: ?0, $options: 'i'} }, {'content': {$regex: ?0, $options: 'i'} }]}")
     Flux<Question> findByTitleOrContentContainingIgnoreCase(String searchTerm, Pageable pageable);
 
-    Flux<Question> findByCreatedAtGreaterThanOrderByCreatedAtDesc(LocalDateTime cursor, Pageable pageable);
+    Flux<Question> findByCreatedAtGreaterThanOrderByCreatedAtAsc(LocalDateTime cursor, Pageable pageable);
 
     Flux<Question> findTop10ByOrderByCreatedAt();
 }

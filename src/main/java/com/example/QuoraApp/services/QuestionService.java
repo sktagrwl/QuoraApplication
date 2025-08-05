@@ -7,6 +7,8 @@ import com.example.QuoraApp.models.Question;
 import com.example.QuoraApp.repositories.IQuestionRepository;
 import com.example.QuoraApp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -47,21 +49,25 @@ public class QuestionService implements IQuestionService{
     }
 
     @Override
-    public Flux<QuestionResponseDTO> getAllQuestion(String cursor, int size) {
+    public Mono<PageImpl<QuestionResponseDTO>> getAllQuestion(String cursor, int size) {
         Pageable pageable = PageRequest.of(0, size);
 
         if(!CursorUtils.isValidCursor(cursor)){
             return questionRepository.findTop10ByOrderByCreatedAt()
                     .take(size)
-                    .map(QuestionAdapter::toQuestionResponseDTO)
+                    .collectList()
+                    .zipWith(this.questionRepository.count())
+                    .map(p -> new PageImpl<>(p.getT1().stream().map(QuestionAdapter::toQuestionResponseDTO).toList(), pageable,p.getT2()))
                     .doOnError(error -> System.out.println("Error finding question" + error))
-                    .doOnComplete(() -> System.out.println("All Questions fetched successfully"));
+                    .doOnSuccess(result -> System.out.println("All Questions fetched successfully"));
         }
         else {
             LocalDateTime cursorTimeStamp = CursorUtils.parseCursor(cursor);
-            return questionRepository.findByCreatedAtGreaterThanOrderByCreatedAtDesc(cursorTimeStamp,pageable)
-                    .map(QuestionAdapter::toQuestionResponseDTO)
-                    .doOnComplete(() -> System.out.println("All Questions fetched successfully"))
+            return questionRepository.findByCreatedAtGreaterThanOrderByCreatedAtAsc(cursorTimeStamp,pageable)
+                    .collectList()
+                    .zipWith(this.questionRepository.count())
+                    .map(p -> new PageImpl<>(p.getT1().stream().map(QuestionAdapter::toQuestionResponseDTO).toList(), pageable,p.getT2()))
+                    .doOnSuccess(result -> System.out.println("All Questions fetched successfully"))
                     .doOnError(error -> System.out.println("Error finding question" + error));
         }
     }

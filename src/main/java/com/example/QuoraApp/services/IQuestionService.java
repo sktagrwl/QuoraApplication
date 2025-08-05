@@ -14,4 +14,6 @@ public interface IQuestionService {
 
     public Mono<PageImpl<QuestionResponseDTO>> getAllQuestion(String cursor, int size);
 
+    public Mono<QuestionResponseDTO> getQuestionById(String id);
+
 }

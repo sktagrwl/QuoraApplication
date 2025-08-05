@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
@@ -19,4 +20,6 @@ public interface IQuestionRepository extends ReactiveMongoRepository<Question, S
     Flux<Question> findByCreatedAtGreaterThanOrderByCreatedAtAsc(LocalDateTime cursor, Pageable pageable);
 
     Flux<Question> findTop10ByOrderByCreatedAt();
+
+
 }

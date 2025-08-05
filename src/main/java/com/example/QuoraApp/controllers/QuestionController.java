@@ -39,12 +39,19 @@ public class QuestionController {
     public Mono<PageImpl<QuestionResponseDTO>> getAllQuestions(
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "10") int size){
-
         return questionService.getAllQuestion(cursor, size)
-                .doOnSuccess(p -> System.out.println("All Questions has been fetched"))
+                .doOnSuccess(result -> System.out.println("All Questions has been fetched"))
                 .doOnError(error -> System.out.println("Error searching for questions" + error));
 
     }
+
+    @GetMapping("/{id}")
+    public Mono<QuestionResponseDTO> getQuestionById(@PathVariable String id){
+        return questionService.getQuestionById(id)
+                .doOnSuccess(result -> System.out.println("Fetched Question By id :" + id ))
+                .doOnError(error -> System.out.println("Error searching for question by id" + error));
+    }
+
 
 
 

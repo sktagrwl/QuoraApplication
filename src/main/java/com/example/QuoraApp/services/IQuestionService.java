@@ -19,4 +19,6 @@ public interface IQuestionService {
 
     public Mono<DeleteResponseDTO> deleteQuestionById(String id);
 
+    public Flux<QuestionResponseDTO> getQuestionByTag(String tag);
+
 }

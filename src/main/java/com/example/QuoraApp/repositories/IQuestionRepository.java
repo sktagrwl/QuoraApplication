@@ -21,5 +21,5 @@ public interface IQuestionRepository extends ReactiveMongoRepository<Question, S
 
     Flux<Question> findTop10ByOrderByCreatedAt();
 
-
+    Flux<Question> findByTagsContaining(String tag);
 }

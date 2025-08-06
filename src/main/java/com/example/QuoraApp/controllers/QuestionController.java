@@ -59,4 +59,11 @@ public class QuestionController {
                 .doOnSuccess(result -> System.out.println("Question with Id :" + id + " has been deleted"))
                 .doOnError(error -> System.out.println("Error deleting question" + error));
     }
+
+    @GetMapping("/tag/{tag}")
+    public Flux<QuestionResponseDTO> getQuestionByTag(@PathVariable String tag){
+        return questionService.getQuestionByTag(tag)
+                .doOnComplete(() -> System.out.println("All Questions tagged as :" + tag +" are fetched"))
+                .doOnError(error -> System.out.println("Error getting questions by tag" + error));
+    }
 }

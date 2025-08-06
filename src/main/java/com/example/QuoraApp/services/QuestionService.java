@@ -30,6 +30,7 @@ public class QuestionService implements IQuestionService{
         Question question = Question.builder()
                 .title(questionRequestDTO.getTitle())
                 .content(questionRequestDTO.getContent())
+                .tags(questionRequestDTO.getTags())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -87,5 +88,13 @@ public class QuestionService implements IQuestionService{
                 .onErrorReturn(new DeleteResponseDTO("Failed to Delete Question" , id, false))
                 .doOnSuccess(result -> System.out.println("Question with Id :" + id + " has been deleted"))
                 .doOnError(error -> System.out.println("Error deleting question" + error));
+    }
+
+    @Override
+    public Flux<QuestionResponseDTO> getQuestionByTag(String tag) {
+        return questionRepository.findByTagsContaining(tag)
+                .map(QuestionAdapter::toQuestionResponseDTO)
+                .doOnError(error -> System.out.println("Error finding question by tag" + error))
+                .doOnComplete(() -> System.out.println("All Questions has been fetched by tag:" + tag));
     }
 }

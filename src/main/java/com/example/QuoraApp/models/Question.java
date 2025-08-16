@@ -5,24 +5,19 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Data
-@Builder
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "questions")
-public class Question {
-
-    @Id
-    private String id;
+public class Question extends BaseModel{
 
     @NotBlank(message ="Title is required")
     @Size(min = 10, max =100, message ="Title mush be between 10 and 100 characters")
@@ -32,14 +27,10 @@ public class Question {
     @Size(min = 10, max =1000, message ="Content mush be between 10 and 1000 characters")
     private String content;
 
+    private Integer views;
+
     @NotEmpty(message ="Add at least one tag")
     @Size(min = 1, max = 10, message ="Maximum 10 tags are allowed")
     private List<@NotBlank(message = "Tags cannot be blank") String> tags;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
 }

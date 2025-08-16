@@ -4,7 +4,9 @@ import com.example.QuoraApp.adapters.QuestionAdapter;
 import com.example.QuoraApp.dto.DeleteResponseDTO;
 import com.example.QuoraApp.dto.QuestionRequestDTO;
 import com.example.QuoraApp.dto.QuestionResponseDTO;
+import com.example.QuoraApp.events.ViewCountEvent;
 import com.example.QuoraApp.models.Question;
+import com.example.QuoraApp.producer.KafkaEventProducer;
 import com.example.QuoraApp.repositories.IQuestionRepository;
 import com.example.QuoraApp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ import java.time.LocalDateTime;
 public class QuestionService implements IQuestionService{
 
     private final IQuestionRepository questionRepository;
+
+    private final KafkaEventProducer kafkaEventProducer;
 
     @Override
     public Mono<QuestionResponseDTO> createQuestion(QuestionRequestDTO questionRequestDTO) {
@@ -77,7 +81,11 @@ public class QuestionService implements IQuestionService{
     public Mono<QuestionResponseDTO> getQuestionById(String id) {
         return questionRepository.findById(id)
                 .map(QuestionAdapter::toQuestionResponseDTO)
-                .doOnSuccess(result -> System.out.println("Question fetched successfully by id"))
+                .doOnSuccess(result -> {
+                    System.out.println("Question fetched successfully by id");
+                    ViewCountEvent viewCountEvent = new ViewCountEvent(id, "question", LocalDateTime.now());
+                    kafkaEventProducer.publishViewCountEvent(viewCountEvent);
+                })
                 .doOnError(error -> System.out.println("Error finding question" + error));
     }
 

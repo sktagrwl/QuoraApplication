@@ -5,16 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.time.LocalDateTime;
+
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class DeleteResponseDTO {
-
-    private String message;
+@Data
+public class AnswerResponseDTO {
 
     private String id;
 
-    private boolean success;
+    private String content;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

@@ -35,8 +35,6 @@ public class QuestionService implements IQuestionService{
                 .title(questionRequestDTO.getTitle())
                 .content(questionRequestDTO.getContent())
                 .tags(questionRequestDTO.getTags())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         return questionRepository.save(question)

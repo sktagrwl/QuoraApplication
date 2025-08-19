@@ -20,7 +20,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Service
@@ -45,9 +44,9 @@ public class QuestionService implements IQuestionService{
                 .build();
 
         return questionRepository.save(question)
-                .map(savedQuestion -> {
-                    questionIndexService.createQuestionIndex(question); // dumping question to elastic search 
-                    return QuestionAdapter.toQuestionResponseDTO(savedQuestion);
+                .flatMap(savedQuestion -> {
+                    return questionIndexService.createQuestionIndex(savedQuestion) // dumping question to elastic search 
+                    .thenReturn(QuestionAdapter.toQuestionResponseDTO(savedQuestion));
                 })
                 .doOnSuccess(response -> System.out.println("Question has been created" + response))
                 .doOnError(error -> System.out.println("Error creating question" + error));
@@ -115,7 +114,8 @@ public class QuestionService implements IQuestionService{
     }
 
     @Override
-    public List<QuestionElasticDocument> searchQuestionsByElastic (String query){
-        return questionDocumentRepository.findByTitleContainingOrContentContaining(query, query);
+    public Flux<QuestionElasticDocument> searchQuestionsByElastic (String query){
+        
+        return questionDocumentRepository.findByTitleContainingOrContentContainingOrTagsContaining(query, query, query);
     }
 }

@@ -72,7 +72,7 @@ public class QuestionController {
     }
 
     @GetMapping("/search/elasticsearch")
-    public List<QuestionElasticDocument> searchQuestionsByElastic (@RequestParam String query){
+    public Flux<QuestionElasticDocument> searchQuestionsByElastic (@RequestParam String query){
 
         return questionService.searchQuestionsByElastic(query);
 

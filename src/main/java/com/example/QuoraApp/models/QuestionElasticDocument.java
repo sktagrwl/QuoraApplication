@@ -1,6 +1,8 @@
 package com.example.QuoraApp.models;
 
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 
 import lombok.AllArgsConstructor;
@@ -22,5 +24,7 @@ public class QuestionElasticDocument {
     private String title;
 
     private String content;
+
+    public List<String> tags;
 
 }

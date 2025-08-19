@@ -25,7 +25,6 @@ public interface IQuestionService {
 
     public Flux<QuestionResponseDTO> getQuestionByTag(String tag);
 
-    public List<QuestionElasticDocument> searchQuestionsByElastic (String query);
-
+    public Flux<QuestionElasticDocument> searchQuestionsByElastic (String query);
 
 }

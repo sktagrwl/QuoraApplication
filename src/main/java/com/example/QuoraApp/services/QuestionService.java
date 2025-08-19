@@ -6,8 +6,10 @@ import com.example.QuoraApp.dto.QuestionRequestDTO;
 import com.example.QuoraApp.dto.QuestionResponseDTO;
 import com.example.QuoraApp.events.ViewCountEvent;
 import com.example.QuoraApp.models.Question;
+import com.example.QuoraApp.models.QuestionElasticDocument;
 import com.example.QuoraApp.producer.KafkaEventProducer;
 import com.example.QuoraApp.repositories.IQuestionRepository;
+import com.example.QuoraApp.repositories.QuestionDocumentRepository;
 import com.example.QuoraApp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -27,6 +30,10 @@ public class QuestionService implements IQuestionService{
     private final IQuestionRepository questionRepository;
 
     private final KafkaEventProducer kafkaEventProducer;
+
+    private final IQuestionIndexService questionIndexService;
+
+    public final QuestionDocumentRepository questionDocumentRepository;
 
     @Override
     public Mono<QuestionResponseDTO> createQuestion(QuestionRequestDTO questionRequestDTO) {
@@ -38,7 +45,10 @@ public class QuestionService implements IQuestionService{
                 .build();
 
         return questionRepository.save(question)
-                .map(QuestionAdapter::toQuestionResponseDTO)
+                .map(savedQuestion -> {
+                    questionIndexService.createQuestionIndex(question); // dumping question to elastic search 
+                    return QuestionAdapter.toQuestionResponseDTO(savedQuestion);
+                })
                 .doOnSuccess(response -> System.out.println("Question has been created" + response))
                 .doOnError(error -> System.out.println("Error creating question" + error));
     }
@@ -102,5 +112,10 @@ public class QuestionService implements IQuestionService{
                 .map(QuestionAdapter::toQuestionResponseDTO)
                 .doOnError(error -> System.out.println("Error finding question by tag" + error))
                 .doOnComplete(() -> System.out.println("All Questions has been fetched by tag:" + tag));
+    }
+
+    @Override
+    public List<QuestionElasticDocument> searchQuestionsByElastic (String query){
+        return questionDocumentRepository.findByTitleContainingOrContentContaining(query, query);
     }
 }

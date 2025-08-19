@@ -3,6 +3,10 @@ package com.example.QuoraApp.services;
 import com.example.QuoraApp.dto.DeleteResponseDTO;
 import com.example.QuoraApp.dto.QuestionRequestDTO;
 import com.example.QuoraApp.dto.QuestionResponseDTO;
+import com.example.QuoraApp.models.QuestionElasticDocument;
+
+import java.util.List;
+
 import org.springframework.data.domain.PageImpl;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,6 +24,8 @@ public interface IQuestionService {
     public Mono<DeleteResponseDTO> deleteQuestionById(String id);
 
     public Flux<QuestionResponseDTO> getQuestionByTag(String tag);
+
+    public List<QuestionElasticDocument> searchQuestionsByElastic (String query);
 
 
 }

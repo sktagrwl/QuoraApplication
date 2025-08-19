@@ -4,8 +4,12 @@ package com.example.QuoraApp.controllers;
 import com.example.QuoraApp.dto.DeleteResponseDTO;
 import com.example.QuoraApp.dto.QuestionRequestDTO;
 import com.example.QuoraApp.dto.QuestionResponseDTO;
+import com.example.QuoraApp.models.QuestionElasticDocument;
 import com.example.QuoraApp.services.IQuestionService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.data.domain.PageImpl;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -54,7 +58,7 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{id}")
-    public Mono<DeleteResponseDTO> deleteQuestionById(@PathVariable String id){
+    public Mono<DeleteResponseDTO> deleteQuestionById(@PathVariable String id) {
         return questionService.deleteQuestionById(id)
                 .doOnSuccess(result -> System.out.println("Question with Id :" + id + " has been deleted"))
                 .doOnError(error -> System.out.println("Error deleting question" + error));
@@ -65,5 +69,12 @@ public class QuestionController {
         return questionService.getQuestionByTag(tag)
                 .doOnComplete(() -> System.out.println("All Questions tagged as :" + tag +" are fetched"))
                 .doOnError(error -> System.out.println("Error getting questions by tag" + error));
+    }
+
+    @GetMapping("/search/elasticsearch")
+    public List<QuestionElasticDocument> searchQuestionsByElastic (@RequestParam String query){
+
+        return questionService.searchQuestionsByElastic(query);
+
     }
 }

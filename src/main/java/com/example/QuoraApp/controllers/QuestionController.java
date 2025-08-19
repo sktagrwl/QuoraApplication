@@ -7,9 +7,6 @@ import com.example.QuoraApp.dto.QuestionResponseDTO;
 import com.example.QuoraApp.models.QuestionElasticDocument;
 import com.example.QuoraApp.services.IQuestionService;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-
 import org.springframework.data.domain.PageImpl;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;

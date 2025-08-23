@@ -18,10 +18,6 @@ public class AnswerController {
 
     private final IAnswerService answerService;
 
-    /**
-     * Create a new answer
-     * POST /api/answers
-     */
     @PostMapping
     public Mono<ResponseEntity<AnswerResponseDTO>> createAnswer(@Valid @RequestBody AnswerRequestDTO answerRequestDTO) {
         return answerService.createAnswer(answerRequestDTO)
@@ -30,10 +26,6 @@ public class AnswerController {
                 .doOnError(error -> System.out.println("Error in answer creation endpoint: " + error.getMessage()));
     }
 
-    /**
-     * Get answer by ID
-     * GET /api/answers/{id}
-     */
     @GetMapping("/{id}")
     public Mono<ResponseEntity<AnswerResponseDTO>> getAnswerById(@PathVariable String id) {
         return answerService.getAnswerById(id)
@@ -43,10 +35,6 @@ public class AnswerController {
                 .doOnError(error -> System.out.println("Error in answer retrieval endpoint for ID " + id + ": " + error.getMessage()));
     }
 
-    /**
-     * Get all answers for a specific question
-     * GET /api/answers/question/{questionId}
-     */
     @GetMapping("/question/{questionId}")
     public Flux<AnswerResponseDTO> getAnswersByQuestionId(@PathVariable String questionId) {
         return answerService.getAnswersByQuestionId(questionId)
@@ -54,10 +42,6 @@ public class AnswerController {
                 .doOnError(error -> System.out.println("Error in answers by question endpoint for question ID " + questionId + ": " + error.getMessage()));
     }
 
-    /**
-     * Get all answers
-     * GET /api/answers
-     */
     @GetMapping
     public Flux<AnswerResponseDTO> getAllAnswers() {
         return answerService.getAllAnswers()
@@ -65,10 +49,6 @@ public class AnswerController {
                 .doOnError(error -> System.out.println("Error in all answers endpoint: " + error.getMessage()));
     }
 
-    /**
-     * Update an existing answer
-     * PUT /api/answers/{id}
-     */
     @PutMapping("/{id}")
     public Mono<ResponseEntity<AnswerResponseDTO>> updateAnswer(
             @PathVariable String id,
@@ -80,10 +60,6 @@ public class AnswerController {
                 .doOnError(error -> System.out.println("Error in answer update endpoint for ID " + id + ": " + error.getMessage()));
     }
 
-    /**
-     * Delete an answer by ID
-     * DELETE /api/answers/{id}
-     */
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> deleteAnswer(@PathVariable String id) {
         return answerService.deleteAnswer(id)
@@ -92,10 +68,6 @@ public class AnswerController {
                 .doOnError(error -> System.out.println("Error in answer deletion endpoint for ID " + id + ": " + error.getMessage()));
     }
 
-    /**
-     * Delete all answers for a specific question
-     * DELETE /api/answers/question/{questionId}
-     */
     @DeleteMapping("/question/{questionId}")
     public Mono<ResponseEntity<Void>> deleteAnswersByQuestionId(@PathVariable String questionId) {
         return answerService.deleteAnswersByQuestionId(questionId)
@@ -104,10 +76,6 @@ public class AnswerController {
                 .doOnError(error -> System.out.println("Error in answers deletion by question endpoint for question ID " + questionId + ": " + error.getMessage()));
     }
 
-    /**
-     * Count answers for a specific question
-     * GET /api/answers/count/question/{questionId}
-     */
     @GetMapping("/count/question/{questionId}")
     public Mono<ResponseEntity<Long>> countAnswersByQuestionId(@PathVariable String questionId) {
         return answerService.countAnswersByQuestionId(questionId)
@@ -116,10 +84,6 @@ public class AnswerController {
                 .doOnError(error -> System.out.println("Error in answer count endpoint for question ID " + questionId + ": " + error.getMessage()));
     }
 
-    /**
-     * Health check endpoint
-     * GET /api/answers/health
-     */
     @GetMapping("/health")
     public Mono<ResponseEntity<String>> healthCheck() {
         return Mono.just(ResponseEntity.ok("Answer service is running"))
